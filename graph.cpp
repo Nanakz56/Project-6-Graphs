@@ -253,12 +253,12 @@ string Graph<K,D>::topologicalSort( )
 // Parameters:  source - the starting vertex for BFS
 // Returns:     none
 //=================================================================
-template <class K, class D>
+/*template <class K, class D>
 void Graph<K,D>::BFS ( K source )
 {
     // TO-DO: Implement BFS algorithm
     return;
-}
+}*/
 
 //=================================================================
 // shortestPath
@@ -267,12 +267,12 @@ void Graph<K,D>::BFS ( K source )
 //              d - destination vertex key
 // Returns:     string representation of the shortest path
 //=================================================================
-template <class K, class D>
+/*template <class K, class D>
 string Graph<K,D>::shortestPath ( K s, K d )
 {
     // TO-DO: Implement shortest path retrieval using BFS results
     return "";
-}
+}*/
 
 //=================================================================
 // asAdjMatrix
@@ -285,6 +285,39 @@ string Graph<K,D>::shortestPath ( K s, K d )
 template <class K, class D>
 int** Graph<K,D>::asAdjMatrix ( ) const
 {
-    // TO-DO: Implement adjacency matrix creation
+
+    std::unordered_map<K, int> vertexIndex;
+    int i = 0;
+    for (const auto& u : verticies) { // for each vertex
+        vertexIndex[u.first] = i; // map a unique index to that vertex key [0 - numV-1]
+        i++;
+    }
+
+    K AdjMatrix[numV][numV];
+
+/*
+    // populate the matrix with default values (INT_MAX)
+
+    for (int r = 0; r < numV; c++) {
+        for (int c = 0; c < numV; r++) {
+            AdjMatrix[r][c] = INT_MAX;
+        }
+    }
+*/
+    int colCount = 0, rowCount = 0;
+
+    for (const auto& u : verticies) {
+        for (const auto& v : u.second.adj) {
+            if (isEdge(u.first, v.first)) {
+                AdjMatrix[rowCount][colCount] = v.second;
+            } else {
+                AdjMatrix[rowCount][colCount] = INT_MAX;
+            }
+            colCount++;
+        }
+        rowCount++;
+        colCount = 0;
+    }
+
     return nullptr;
 }
