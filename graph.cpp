@@ -257,7 +257,46 @@ string Graph<K,D>::topologicalSort( )
 template <class K, class D>
 void Graph<K,D>::BFS ( K source )
 {
-    // TO-DO: Implement BFS algorithm
+    
+    for (auto& [u, uInfo] : vertices) { // initialize all vertice info in our graph to unvisited status
+        uInfo.color = 'w';
+        uInfo.d = INT_MAX;
+        uInfo.pre = nullptr;
+    }
+
+    // initialize source vertice info to visited (BFS starts here)
+    vertices[source].color = 'g';
+    vertices[source].d = 0;
+    vertices[source].pre = nullptr;
+
+    // Now, let's create a queue to handle the wave-like traversal over our verticies
+
+    queue<K> q;
+    q.push(source); // our first vertice will, of course, be the source
+
+    while (!q.empty()) { // while our queue still contains vertices (not all paths explored yet)
+
+        K u = q.front(); // store front key for this iteration
+        K* uPtr = &u;
+        auto& uInfo = vertices[u]; // store info struct for this vertice
+        q.pop(); // pop said key off the queue
+
+        for (auto const& [v, weight] : uInfo.adj) { // for each vertice reachable from vertice u
+
+            auto& vInfo = vertices[v]; // fetch the vertice info for key v
+
+            if (vInfo.color == 'w') { // if the vertice we're looking at hasn't been visited yet
+                vInfo.color = 'g'; // color is now grey as we'll be adding it to the queue
+                vInfo.d = uInfo.d+1; // it's one vertice further from the source than its predecessor
+                vInfo.pre = uPtr; // u is its predecessor
+
+                q.push(v); // add this vertice to the queue for future BFS traversal
+            }
+
+            uInfo.color = 'b'; // this node has now been visited
+        }
+    }
+
     return;
 }
 
@@ -271,8 +310,27 @@ void Graph<K,D>::BFS ( K source )
 template <class K, class D>
 string Graph<K,D>::shortestPath ( K s, K d )
 {
-    // TO-DO: Implement shortest path retrieval using BFS results
-    return "";
+    BFS(s); // establish distance and predecessor info for given graph
+
+    string ret = ""; // initialize ret string 
+    K current = d; // we'll start from the dest vertice and trace back through the predecessors
+    auto& currentInfo = vertices[current]; // fetch the current vertice info
+    ret += current; // start with the dest key at the end
+
+    while (currentInfo.pre != nullptr) { // while the predecessor is not null, keep tracing backwards
+
+        current = *currentInfo.pre; // current = key of current's predecessor
+        currentInfo = vertices[current]; // fetch the vertice info for new key
+
+        ret = current + "->" + ret; // add new current key to the ret string
+
+    }
+
+    if (current != s) { // if the backwards traversal didn't result in our reaching the source vertice
+        ret = ""; // set ret to the empty string
+    }
+
+    return ret; // return our final ret trace
 }
 
 //=================================================================

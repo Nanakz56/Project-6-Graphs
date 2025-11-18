@@ -145,10 +145,10 @@ int main()
     cout << "Graph created from file:" << endl;
     cout << g.toString() << endl;
 
-    //test_DFS();
-    //test_topologicalSort();
-    //test_BFS();
-    //test_shortestPath();
+    test_DFS();
+    test_topologicalSort();
+    test_BFS();
+    test_shortestPath();
     test_asAdjMatrix();
 
     cout << "Testing completed" << endl;
