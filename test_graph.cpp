@@ -85,7 +85,6 @@ void test_shortestPath()
 {
     try{
         Graph<int, string> g = createGraphFromFile("example.txt");
-        cout << "Testing shortest path from 0 to 3." << endl;
         string path = g.shortestPath(0, 3);
         cout << "Shortest path from 0 to 3: " << path << endl;
         if (path != "0->2->3") {
@@ -94,6 +93,18 @@ void test_shortestPath()
     }
     catch (std::exception& e) {
         cerr << "Error testing shortest path: " << e.what() << endl;
+    }
+
+    try {
+        Graph<int, string> g = createGraphFromFile("example2.txt");
+        string path = g.shortestPath(0, 9);
+        cout << "Shortest path from 0 to 9: " << path << endl;
+        if (path != "0->5->9") {
+            cout << "Shortest path result is incorrect. Expected: 0->5->9 but got: " << path << endl;
+        }
+    }
+    catch (std::exception& e) {
+        cerr << "Error testing shortest path (no path case): " << e.what() << endl;
     }
 }
 

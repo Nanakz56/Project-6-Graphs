@@ -277,8 +277,8 @@ void Graph<K,D>::BFS ( K source )
     while (!q.empty()) { // while our queue still contains vertices (not all paths explored yet)
 
         K u = q.front(); // store front key for this iteration
-        K* uPtr = &u;
-        auto& uInfo = vertices[u]; // store info struct for this vertice
+        auto uPtr = vertices.find(u); // find the tuple for the vertice with said key
+        auto& uInfo = uPtr->second; // reference to said vertice info
         q.pop(); // pop said key off the queue
 
         for (auto const& [v, weight] : uInfo.adj) { // for each vertice reachable from vertice u
@@ -288,7 +288,7 @@ void Graph<K,D>::BFS ( K source )
             if (vInfo.color == 'w') { // if the vertice we're looking at hasn't been visited yet
                 vInfo.color = 'g'; // color is now grey as we'll be adding it to the queue
                 vInfo.d = uInfo.d+1; // it's one vertice further from the source than its predecessor
-                vInfo.pre = uPtr; // u is its predecessor
+                vInfo.pre = &(uPtr->first); // u is its predecessor
 
                 q.push(v); // add this vertice to the queue for future BFS traversal
             }
@@ -315,14 +315,14 @@ string Graph<K,D>::shortestPath ( K s, K d )
     string ret = ""; // initialize ret string 
     K current = d; // we'll start from the dest vertice and trace back through the predecessors
     auto& currentInfo = vertices[current]; // fetch the current vertice info
-    ret += current; // start with the dest key at the end
+    ret += to_string(current); // start with the dest key at the end
 
     while (currentInfo.pre != nullptr) { // while the predecessor is not null, keep tracing backwards
 
         current = *currentInfo.pre; // current = key of current's predecessor
         currentInfo = vertices[current]; // fetch the vertice info for new key
 
-        ret = current + "->" + ret; // add new current key to the ret string
+        ret = to_string(current) + "->" + ret; // add new current key to the ret string
 
     }
 

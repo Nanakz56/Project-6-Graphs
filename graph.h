@@ -24,7 +24,7 @@ struct VertexInfo
 
     // attributes filled in during BFS/DFS
     int                      d; // distance from source
-    K*                     pre; // predecessor in search
+    const K*                     pre; // predecessor in search
     char                 color; // 'w', 'g', 'b'
     
     int                 d_time; // discovery time in DFS
