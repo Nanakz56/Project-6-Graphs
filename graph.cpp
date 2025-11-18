@@ -8,6 +8,7 @@
 
 #include <queue>
 #include <climits>
+#include <unordered_map>
 
 //=================================================================
 // Default constructor
@@ -253,12 +254,12 @@ string Graph<K,D>::topologicalSort( )
 // Parameters:  source - the starting vertex for BFS
 // Returns:     none
 //=================================================================
-/*template <class K, class D>
+template <class K, class D>
 void Graph<K,D>::BFS ( K source )
 {
     // TO-DO: Implement BFS algorithm
     return;
-}*/
+}
 
 //=================================================================
 // shortestPath
@@ -267,12 +268,12 @@ void Graph<K,D>::BFS ( K source )
 //              d - destination vertex key
 // Returns:     string representation of the shortest path
 //=================================================================
-/*template <class K, class D>
+template <class K, class D>
 string Graph<K,D>::shortestPath ( K s, K d )
 {
     // TO-DO: Implement shortest path retrieval using BFS results
     return "";
-}*/
+}
 
 //=================================================================
 // asAdjMatrix
@@ -286,38 +287,46 @@ template <class K, class D>
 int** Graph<K,D>::asAdjMatrix ( ) const
 {
 
-    std::unordered_map<K, int> vertexIndex;
+    unordered_map<K, int> keyIndex; // map for storing key indexes
     int i = 0;
-    for (const auto& u : verticies) { // for each vertex
-        vertexIndex[u.first] = i; // map a unique index to that vertex key [0 - numV-1]
-        i++;
+
+    for (const auto& u : vertices) { // for each of the vertices
+        keyIndex[u.first] = i; // map that key to an index (0-indexed)
+        i++; // increment said index for next key
     }
 
-    K AdjMatrix[numV][numV];
+    // Now, let's populate the matrix with the default value (INT_MAX)
 
-/*
-    // populate the matrix with default values (INT_MAX)
+    int** AdjMatrix = new int*[numV]; // declare array of arrays (2D array)
+    for (int r = 0; r < numV; r++) {
+        AdjMatrix[r] = new int[numV]; // allocate a row array for each column
+    }
 
-    for (int r = 0; r < numV; c++) {
-        for (int c = 0; c < numV; r++) {
-            AdjMatrix[r][c] = INT_MAX;
+    for (int row = 0; row < numV; row++) {
+        for (int col = 0; col < numV; col++) {
+            AdjMatrix[row][col] = INT_MAX; // populate each value of our 2D array with INT_MAX
         }
     }
-*/
+
+    // Now, we'll overwrite relations with weights by our adj List
+
     int colCount = 0, rowCount = 0;
 
-    for (const auto& u : verticies) {
-        for (const auto& v : u.second.adj) {
-            if (isEdge(u.first, v.first)) {
-                AdjMatrix[rowCount][colCount] = v.second;
-            } else {
-                AdjMatrix[rowCount][colCount] = INT_MAX;
-            }
-            colCount++;
+    for (const auto& u : vertices) { // for each of the vertices
+        
+        for (const auto& v : u.second.adj) { // for neighbor relationship in the adj list of node u
+
+            K neighbor = get<0>(v); // get the neighbors key
+            int weight = get<1>(v); // get the weight of said relationship
+
+            colCount = keyIndex[neighbor]; // fetch the index of the neighbor key from our map
+
+            AdjMatrix[rowCount][colCount] = weight; // set the weight for this relationship in our adj matrix
+
         }
-        rowCount++;
-        colCount = 0;
+
+        rowCount++; // fill in next row
     }
 
-    return nullptr;
+    return AdjMatrix; // return our int** implemented 2D adj matrix
 }
