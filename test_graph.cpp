@@ -63,6 +63,7 @@ void test_topologicalSort()
    if (topSortResult != "0->1->2->3") {
        cout << "Topological sort result is incorrect. Expected: 0->1->2->3 but got: " << topSortResult << endl;
    }
+
 }
 
 void test_BFS()
@@ -78,6 +79,19 @@ void test_BFS()
    catch (std::exception& e) {
        cerr << "Error testing BFS: " << e.what() << endl;
        return;
+   }
+
+   try {
+        Graph<int, string> g2 = createGraphFromFile("example2.txt");
+        auto start2 = chrono::high_resolution_clock::now();
+        g2.BFS(0);
+        auto end2 = chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed2 = end2 - start2;
+        cout << "BFS took " << elapsed2.count() << " seconds from source 0." << endl;
+   }
+   catch (std::exception& e) {
+        cerr << "Error testing BFS: " << e.what() << endl;
+        return;
    }
 }
 
