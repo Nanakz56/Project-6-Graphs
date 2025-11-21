@@ -1,0 +1,14 @@
+6 7
+alpha 1
+beta 0
+gamma 1
+delta 0
+epsilon 1
+zeta 0
+alpha beta 1
+beta gamma 2
+gamma delta 3
+delta epsilon 4
+epsilon zeta 5
+zeta alpha 6
+beta delta 7
