@@ -2,7 +2,7 @@
 //  test_graph_example.cpp
 //  CS 271 Graph Project: Example Test File
 //  Expand on these tests!
-// *******************************************
+// *******************************************s
 
 #include <stdlib.h>
 #include <iostream>
@@ -15,38 +15,10 @@
 #include "graph.h"
 using namespace std;
 
-// helper function to create a graph from a file
-// first line: number of vertices (v) and number of edges (e)
-// next v lines: vertex key (int) and data (string)
-// next e lines: edge from vertex1 to vertex2 with weight
-Graph<int, string> createGraphFromFile(const string& filename)
+void test_DFS(string textfile)
 {
-    Graph<int, string> g;
-    ifstream infile(filename);
-    if (!infile) {
-        cerr << "Error opening file: " << filename << endl;
-        return g;
-    }
-    int v, e;
-    infile >> v >> e;
-    for (int i = 0; i < v; ++i) {
-        int key;
-        string data;
-        infile >> key >> data;
-        g.insertVertex(key, data);
-    }
-    for (int i = 0; i < e; ++i) {
-        int from, to;
-        double weight;
-        infile >> from >> to >> weight;
-        g.insertEdge(from, to, weight);
-    }
-    return g;
-}
-
-void test_DFS()
-{
-   Graph<int, string> g = createGraphFromFile("example.txt");
+   Graph<int, string> g;
+   g.createGraphFromFile(textfile);
    auto start = chrono::high_resolution_clock::now();
    g.DFS();
    auto end = chrono::high_resolution_clock::now();
@@ -54,51 +26,23 @@ void test_DFS()
    cout << "DFS took " << elapsed.count() << " seconds." << endl;
 }
 
-void test_topologicalSort()
+void test_topologicalSort(string textfile)
 {
    // create graph from file example.txt
-   Graph<int, string> g = createGraphFromFile("example.txt");
+   Graph<int, string> g;
+   g.createGraphFromFile(textfile);
    string topSortResult = g.topologicalSort();
    cout << "Topological Sort Result: " << topSortResult << endl;
    if (topSortResult != "0->1->2->3") {
        cout << "Topological sort result is incorrect. Expected: 0->1->2->3 but got: " << topSortResult << endl;
    }
-
 }
 
-void test_BFS()
-{
-   try{
-       Graph<int, string> g = createGraphFromFile("example.txt");
-       auto start = chrono::high_resolution_clock::now();
-       g.BFS(0);
-       auto end = chrono::high_resolution_clock::now();
-       chrono::duration<double> elapsed = end - start;
-       cout << "BFS took " << elapsed.count() << " seconds from source 0." << endl;
-   }
-   catch (std::exception& e) {
-       cerr << "Error testing BFS: " << e.what() << endl;
-       return;
-   }
-
-   try {
-        Graph<int, string> g2 = createGraphFromFile("example2.txt");
-        auto start2 = chrono::high_resolution_clock::now();
-        g2.BFS(0);
-        auto end2 = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed2 = end2 - start2;
-        cout << "BFS took " << elapsed2.count() << " seconds from source 0." << endl;
-   }
-   catch (std::exception& e) {
-        cerr << "Error testing BFS: " << e.what() << endl;
-        return;
-   }
-}
-
-void test_shortestPath()
+void test_shortestPath(string filename)
 {
     try{
-        Graph<int, string> g = createGraphFromFile("example.txt");
+        Graph<int, string> g;
+        g.createGraphFromFile("example.txt");
         string path = g.shortestPath(0, 3);
         cout << "Shortest path from 0 to 3: " << path << endl;
         if (path != "0->2->3") {
@@ -108,75 +52,68 @@ void test_shortestPath()
     catch (std::exception& e) {
         cerr << "Error testing shortest path: " << e.what() << endl;
     }
-
-    try {
-        Graph<int, string> g = createGraphFromFile("example2.txt");
-        string path = g.shortestPath(0, 9);
-        cout << "Shortest path from 0 to 9: " << path << endl;
-        if (path != "0->5->9") {
-            cout << "Shortest path result is incorrect. Expected: 0->5->9 but got: " << path << endl;
-        }
-    }
-    catch (std::exception& e) {
-        cerr << "Error testing shortest path (no path case): " << e.what() << endl;
-    }
 }
 
-void test_asAdjMatrix()
-{
-    try{
-        Graph<int, string> g = createGraphFromFile("example.txt");
-        int** adjMatrix = g.asAdjMatrix();
-        if (adjMatrix == nullptr) {
-            cout << "Error: adjacency matrix is null." << endl;
-            return;
-        }
-        // Convert adjMatrix to string for comparison
-        string actualString;
-        for (int i = 0; i < g.size(); ++i) {
-            for (int j = 0; j < g.size(); ++j) {
-                if (adjMatrix[i][j] == INT_MAX)
-                    actualString += "inf ";
-                else
-                actualString += to_string(adjMatrix[i][j]) + " ";
-            }
-            actualString.pop_back(); // remove trailing space
-            actualString += "\n";
-        }
-        cout << "Adjacency Matrix:" << endl;
-        cout << actualString << endl;
+void printHeader(string filename){
+    cout << "========================================="<<endl;
+    cout << "Testing operations for " << filename <<endl;
+    cout << "========================================="<<endl;
+}
 
-        int expectedMatrix[g.size()][g.size()] = {
-            {INT_MAX, 1, 2, INT_MAX},
-            {INT_MAX, INT_MAX, 3, INT_MAX},
-            {INT_MAX, INT_MAX, INT_MAX, 4},
-            {INT_MAX, INT_MAX, INT_MAX, INT_MAX}
-        };
-        
-        string expectedString ="inf 1 2 inf\ninf inf 3 inf\ninf inf inf 4\ninf inf inf inf\n";
-
-        if (actualString != expectedString) {
-            cout << "Adjacency matrix is incorrect. Expected:\n" << expectedString << "but got:\n" << actualString << endl;
-        }
-    }
-    catch (std::exception& e) {
-        cerr << "Error testing adjacency matrix: " << e.what() << endl;
-    }    
+template<class K, class D>
+void insertDiffEdges(Graph<K, D>& g){
+    //weights remain the same. bi-directional traversal for the following vertices
+    g.insertEdge(5, 0, 2);
+    g.insertEdge(6, 2, 3);
+    g.insertEdge(4, 1, 7);
+    g.insertEdge(9,5,6);
+    g.insertEdge(8, 3, 1);
 }
 
 int main()
 {
-
-    Graph<int, string> g = createGraphFromFile("example.txt");
+    //Case 1: Directed, Weight Graph (simple)
+    Graph<int, string> g;
+    g.createGraphFromFile("example.txt");
+    printHeader("example.txt");
     cout << "Graph created from file:" << endl;
     cout << g.toString() << endl;
+    
+    test_DFS("example.txt");
+    test_topologicalSort("example.txt");
+    g.test_BFS(0);
+    test_shortestPath("example.txt");
+    g.test_asAdjMatrix();
+    
+    //Case 2: Directed, Weighted Graph (more range of values + integer vertices)
+    g.createGraphFromFile("example2.txt");
+    printHeader("example2.txt");
+    cout << "Graph created from file:" << endl;
+    cout << g.toString() << endl;    
+    g.test_BFS(0);
+    test_shortestPath("example2.txt");
+    g.test_asAdjMatrix();
 
-    test_DFS();
-    test_topologicalSort();
-    test_BFS();
-    test_shortestPath();
-    test_asAdjMatrix();
+    //Case 2a: Creating an undirected from a directed graph (not fully)
+    insertDiffEdges(g);
 
+    //Case 3: Creating graphs of vertices with varying data types
+    Graph<char, float> c;
+    c.createGraphFromFile("example_Char_Float.txt");
+    printHeader("example_Char_Float.txt");
+    cout << "Graph created from file:" << endl;
+    cout << c.toString() << endl;
+    c.test_BFS('e');
+    c.test_asAdjMatrix();
+
+    Graph<string, bool> d;
+    d.createGraphFromFile("example_String_Bool.txt");
+    printHeader("example_String_Bool.txt");
+    cout << "Graph created from file:" << endl;
+    cout << d.toString() << endl;
+    d.test_BFS("gamma");
+    d.test_asAdjMatrix();
+   
     cout << "Testing completed" << endl;
 
     return 0;
