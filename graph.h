@@ -56,6 +56,15 @@ public:
    void    BFS             ( K source );
    string  shortestPath    ( K s, K d );
    int**   asAdjMatrix     ( ) const;
+
+   //=================================
+   // helper tester methods
+   //=================================
+   void    test_BFS        (K source);
+   Graph<K, D> createGraphFromFile  (const string& filename);
+   void    test_asAdjMatrix   ();
+
+
 };
 #include "graph.cpp"
 #endif
