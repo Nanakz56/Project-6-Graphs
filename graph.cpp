@@ -443,6 +443,25 @@ Graph<K, D> Graph<K,D>::createGraphFromFile(const string& filename)
     return (*this);
 }
 
+/*Function to test the shortestPath method.
+PARAMETERS: Two vertices and the correct string path
+RETURN: none. Prints path onto console.
+Informs the user know when an incorrect path was traversed.*/
+template<class K, class D>
+void Graph<K, D>:: test_shortestPath(K v1, K v2, string correctPath)
+{
+    try{
+        string path = this->shortestPath(v1, v2);
+        cout << "Shortest path from " <<v1 <<" to " <<v2 <<": " << path << endl;
+        if (path != correctPath) {
+            cout << "Shortest path result is incorrect. Expected:" << correctPath<< "but got: " << path << endl;
+        }
+    }
+    catch (std::exception& e) {
+        cerr << "Error testing shortest path: " << e.what() << endl;
+    }
+}
+
 /*
 Templated function to print out the adjacency 
 matrix representation of a graph.
