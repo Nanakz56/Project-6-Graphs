@@ -388,3 +388,91 @@ int** Graph<K,D>::asAdjMatrix ( ) const
 
     return AdjMatrix; // return our int** implemented 2D adj matrix
 }
+
+/*
+Templated test_BFS function to work for all
+vertices with varying data types.
+Traverses the graph, records the time and prints it
+PARAMETERS: source vertex (any type)
+RETURN VALUE: none. prints traversal time onto console
+*/
+template<class K, class D>
+void Graph<K,D>::test_BFS(K source)
+{
+   try{
+       auto start = chrono::high_resolution_clock::now();
+       BFS(source);
+       auto end = chrono::high_resolution_clock::now();
+       chrono::duration<double> elapsed = end - start;
+       cout << "BFS took " << elapsed.count() << " seconds from source: " <<source << endl;
+   }
+   catch (std::exception& e) {
+       cerr << "Error testing BFS: " << e.what() << endl;
+       return;
+   }
+}
+
+
+
+// helper function to create a graph from a file
+// first line: number of vertices (v) and number of edges (e)
+// next v lines: vertex key (int) and data (string)
+// next e lines: edge from vertex1 to vertex2 with weight
+template<class K, class D>
+Graph<K, D> Graph<K,D>::createGraphFromFile(const string& filename)
+{
+    ifstream infile(filename);
+    if (!infile) {
+        cerr << "Error opening file: " << filename << endl;
+        return (*this);
+    }
+    int v, e;
+    infile >> v >> e;
+    for (int i = 0; i < v; ++i) {
+        K key;
+        D data;
+        infile >> key >> data;
+        insertVertex(key, data);
+    }
+    for (int i = 0; i < e; ++i) {
+        K from, to;
+        double weight;
+        infile >> from >> to >> weight;
+        insertEdge(from, to, weight);
+    }
+    return (*this);
+}
+
+/*
+Templated function to print out the adjacency 
+matrix representation of a graph.
+PARAMETERS: none
+RETURN VALUE: none. prints adjacency matrix*/
+template<class K, class D>
+void Graph<K,D>:: test_asAdjMatrix()
+{
+    try{
+        int** adjMatrix = this->asAdjMatrix();
+        if (adjMatrix == nullptr) {
+            cout << "Error: adjacency matrix is null." << endl;
+            return;
+        }
+        // Convert adjMatrix to string for comparison
+        string actualString;
+        for (int i = 0; i < (this->size()); ++i) {
+            for (int j = 0; j < (this->size()); ++j) {
+                if (adjMatrix[i][j] == INT_MAX)
+                    actualString += "inf ";
+                else
+                actualString += to_string(adjMatrix[i][j]) + " ";
+            }
+            actualString.pop_back(); // remove trailing space
+            actualString += "\n";
+        }
+        cout << "Adjacency Matrix:" << endl;
+        cout << actualString << endl;
+    }
+    catch (std::exception& e) {
+        cerr << "Error testing adjacency matrix: " << e.what() << endl;
+    }    
+}
