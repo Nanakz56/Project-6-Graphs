@@ -15,6 +15,10 @@
 #include "graph.h"
 using namespace std;
 
+string exampleShortestPath = "0->2->3";
+string example2ShortestPath = "0->5->9";
+string exampleCharFloat = "f->g->d->j";
+
 void test_DFS(string textfile)
 {
    Graph<int, string> g;
@@ -38,21 +42,6 @@ void test_topologicalSort(string textfile)
    }
 }
 
-void test_shortestPath(string filename)
-{
-    try{
-        Graph<int, string> g;
-        g.createGraphFromFile("example.txt");
-        string path = g.shortestPath(0, 3);
-        cout << "Shortest path from 0 to 3: " << path << endl;
-        if (path != "0->2->3") {
-            cout << "Shortest path result is incorrect. Expected: 0->2->3 but got: " << path << endl;
-        }
-    }
-    catch (std::exception& e) {
-        cerr << "Error testing shortest path: " << e.what() << endl;
-    }
-}
 
 void printHeader(string filename){
     cout << "========================================="<<endl;
@@ -82,7 +71,7 @@ int main()
     test_DFS("example.txt");
     test_topologicalSort("example.txt");
     g.test_BFS(0);
-    test_shortestPath("example.txt");
+    g.test_shortestPath(0, 3, exampleShortestPath);
     g.test_asAdjMatrix();
     
     //Case 2: Directed, Weighted Graph (more range of values + integer vertices)
@@ -91,7 +80,7 @@ int main()
     cout << "Graph created from file:" << endl;
     cout << g.toString() << endl;    
     g.test_BFS(0);
-    test_shortestPath("example2.txt");
+    g.test_shortestPath(0,9, example2ShortestPath);
     g.test_asAdjMatrix();
 
     //Case 2a: Creating an undirected from a directed graph (not fully)
