@@ -60,10 +60,10 @@ public:
    //=================================
    // helper tester methods
    //=================================
-   void    test_BFS        (K source);
+   void    test_BFS           (K source);
    Graph<K, D> createGraphFromFile  (const string& filename);
-   void    test_asAdjMatrix   ();
-
+   void    test_asAdjMatrix   (  );
+   void    test_shortestPath  ( K, K, string);
 
 };
 #include "graph.cpp"
